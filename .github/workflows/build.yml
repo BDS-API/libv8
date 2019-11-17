@@ -1,9 +1,9 @@
 name: CI
 
 on:
-  create:
-  release:
-    types: [created ,unpublished]
+  push:
+    tags:
+    - '*'
 
 
 jobs:
@@ -39,11 +39,16 @@ jobs:
         
         cd ..
     - name: Compress artifacts
-      run: tar czf ${V8_ARCHIVE_NAME} v8/out.gn/lib/obj/*.a v8/include/
-    - name: Deploy
-      uses: yakuhzi/action-release@v1.0.0
-      with:
-        file: ${V8_ARCHIVE_NAME}
+      run: |
+        tar czf ${V8_ARCHIVE_NAME} v8/out.gn/ v8/include/
+        echo ${GITHUB_REF} > CHANGELOG.md
+    - name: Release
+      uses: docker://antonyurchenko/git-release:latest
       env:
         GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        DRAFT_RELEASE: "false"
+        PRE_RELEASE: "false"
+        CHANGELOG_FILE: "CHANGELOG.md"
+      with:
+        args: ${V8_ARCHIVE_NAME}
       
