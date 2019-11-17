@@ -11,7 +11,7 @@ env:
   - V8_ARCHIVE_NAME=v8-${TRAVIS_OS_NAME}-x64.tar.gz
 cache:
   ccache: true
-if: tag IS present
+# if: tag IS present
 
 before_install:
   - |
