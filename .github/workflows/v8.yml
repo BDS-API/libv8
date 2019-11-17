@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  release:
+    types: [unpublished]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    env:
+      CCACHE_CPP2: yes
+      CCACHE_SLOPPINESS: time_macros
+      V8_ARCHIVE_NAME: v8-linux-${GITHUB_REF}-x64.tar.gz
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Checkout
+      run: echo Hello, world!
+    - name: Install components
+      run: |
+        sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
+        sudo apt update
+        sudo apt install -y libatspi2.0-dev ccache
+        ccache --version | head -n 1
+        ccache --max-size=5G
+        git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+        export PATH="$(pwd)/depot_tools:$PATH
+        fetch v8
+        cd v8
+        git fetch origin ${GITHUB_REF}
+        git checkout ${GITHUB_REF}
+        gclient sync
+        cd ..
+    - name: Compile
+      run: |
+        cd v8
+        gn gen out.gn/lib --args=''"$(cat ../args.linux.gn)"''
+        ninja -C out.gn/lib v8_monolith
+        cd ..
+    - name: Compress artifacts
+      run: tar czf ${V8_ARCHIVE_NAME} v8/out.gn/lib/obj/*.a v8/include/
+    - name: Deploy
+      uses: yakuhzi/action-release@v1.0.0
+      with:
+        file: ${V8_ARCHIVE_NAME}
+      env:
+        GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+      
