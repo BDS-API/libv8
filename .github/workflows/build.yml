@@ -18,8 +18,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Checkout
-      run: echo Hello, world!
-    - name: Install components
+      run: echo Checkout complete
+    - name: Compile
       run: |
         sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
         sudo apt update
@@ -33,12 +33,10 @@ jobs:
         git fetch origin ${GITHUB_REF}
         git checkout ${GITHUB_REF}
         gclient sync
-        cd ..
-    - name: Compile
-      run: |
-        cd v8
+        
         gn gen out.gn/lib --args=''"$(cat ../args.linux.gn)"''
         ninja -C out.gn/lib v8_monolith
+        
         cd ..
     - name: Compress artifacts
       run: tar czf ${V8_ARCHIVE_NAME} v8/out.gn/lib/obj/*.a v8/include/
