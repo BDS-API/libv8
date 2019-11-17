@@ -13,7 +13,7 @@ jobs:
     env:
       CCACHE_CPP2: yes
       CCACHE_SLOPPINESS: time_macros
-      V8_ARCHIVE_NAME: v8-linux-${GITHUB_REF}-x64.tar.gz
+      V8_ARCHIVE_NAME: v8-linux-x64.tar.gz
 
     steps:
     - uses: actions/checkout@v1
@@ -50,5 +50,5 @@ jobs:
         PRE_RELEASE: "false"
         CHANGELOG_FILE: "CHANGELOG.md"
       with:
-        args: ${V8_ARCHIVE_NAME}
+        args: ${{ env.V8_ARCHIVE_NAME }}
       
