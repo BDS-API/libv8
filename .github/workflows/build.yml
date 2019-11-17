@@ -27,7 +27,7 @@ jobs:
         ccache --version | head -n 1
         ccache --max-size=5G
         git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-        export PATH="$(pwd)/depot_tools:$PATH
+        export PATH="$(pwd)/depot_tools:$PATH"
         fetch v8
         cd v8
         git fetch origin ${GITHUB_REF}
