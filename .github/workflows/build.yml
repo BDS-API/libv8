@@ -1,8 +1,10 @@
 name: CI
 
 on:
+  create:
   release:
-    types: [created, unpublished]
+    types: [created ,unpublished]
+
 
 jobs:
   build:
