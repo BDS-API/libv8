@@ -40,7 +40,7 @@ jobs:
         cd ..
     - name: Compress artifacts
       run: |
-        tar czf ${V8_ARCHIVE_NAME} v8/out.gn/ v8/include/
+        tar czf ${V8_ARCHIVE_NAME} v8/out.gn/lib/obj/*.a v8/include/
         echo ${GITHUB_REF} > CHANGELOG.md
     - name: Release
       uses: docker://antonyurchenko/git-release:latest
